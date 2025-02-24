@@ -1,11 +1,13 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
+require_once('../config/database.php'); // Si necesitas la conexión
+
+// Si el parámetro logout está en la URL, ejecuta el método de cierre de sesión
+if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
+    $auth = new AuthController();
+    $auth->logout();
 }
 
-require_once('../config/database.php');
-
-//jh
 class AuthController {
 
     // Método para iniciar sesión

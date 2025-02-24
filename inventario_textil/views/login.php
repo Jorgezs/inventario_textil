@@ -1,16 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 require_once('../controllers/authController.php');
-
-// Verificar si ya está logueado
-if (isset($_SESSION['user_id'])) {
-    // Si ya está logueado, redirigirlo al dashboard
-    header('Location: ../views/dashboard.php');
-    exit();
-}
 
 // Verificar si el formulario fue enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
