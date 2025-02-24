@@ -1,6 +1,3 @@
--- Crear la base de datos
-CREATE DATABASE inventario_textil;
-USE inventario_textil;
 
 -- Tabla de usuarios
 CREATE TABLE usuarios (
