@@ -38,7 +38,7 @@ $productos = Producto::getAll();
                 <td><?= $producto['precio'] ?></td>
                 <td><?= $producto['stock'] ?></td>
                 <td>
-                    <a href="../views/editar_producto.php?id=<?= $producto['id_producto'] ?>">Editar</a> | 
+                    <a href="../views/edit_producto.php?id=<?= $producto['id_producto'] ?>">Editar</a> | 
                     <a href="../controllers/productoController.php?action=delete&id_producto=<?= $producto['id_producto'] ?>" onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
                 </td>
             </tr>
