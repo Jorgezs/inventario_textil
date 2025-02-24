@@ -124,34 +124,55 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                 </table>
             </div>
 
-            <!-- Pedidos -->
-            <div class="tab-pane fade" id="pills-pedidos">
-                <table class="table table-hover table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID Pedido</th>
-                            <th>Usuario</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($pedidos as $pedido): ?>
-                            <tr>
-                                <td><?= $pedido['id_pedido'] ?></td>
-                                <td><?= $pedido['nombre_usuario'] ?></td>
-                                <td><?= $pedido['fecha_pedido'] ?></td>
-                                <td><?= ucfirst($pedido['estado']) ?></td>
-                                <td>
-                                    <a href="../views/view_pedidos.php?id=<?= $pedido['id_pedido'] ?>" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
-                                    <a href="../controllers/pedidoController.php?action=actualizar_estado&id_pedido=<?= $pedido['id_pedido'] ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Estado</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+
+
+
+
+            
+        <!-- Pedidos -->
+<div class="tab-pane fade" id="pills-pedidos">
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID Usuario</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($usuarios as $usuario): ?>
+                <tr>
+                    <td><?= $usuario['id_usuario'] ?></td>
+                    <td><?= $usuario['nombre'] ?></td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="verPedidosUsuario(<?= $usuario['id_usuario'] ?>)">
+                            <i class="fas fa-eye"></i> Ver Pedidos
+                        </button>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<!-- Tabla para mostrar los pedidos de un usuario -->
+<div id="pedidosUsuario" class="mt-4" style="display: none;">
+    <h3>Pedidos de <span id="usuarioNombre"></span></h3>
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID Pedido</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="pedidosBody">
+            <!-- Aquí se llenarán los pedidos dinámicamente -->
+        </tbody>
+    </table>
+</div>
+
         </div>
     </div>
 

@@ -109,5 +109,90 @@ class Pedido {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+
+    public static function obtenerProductosPorPedido($id_pedido) {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT dp.*, p.nombre, p.precio 
+                               FROM detalle_pedido dp
+                               INNER JOIN productos p ON dp.id_producto = p.id_producto
+                               WHERE dp.id_pedido = :id_pedido");
+        $stmt->bindParam(':id_pedido', $id_pedido, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function cancelarPedido($id_pedido) {
+        global $pdo;
+        try {
+            $pdo->beginTransaction();
+    
+            // Obtener el estado del pedido y el id_usuario
+            $stmt = $pdo->prepare("SELECT id_usuario, estado FROM pedidos WHERE id_pedido = :id_pedido");
+            $stmt->bindParam(':id_pedido', $id_pedido, PDO::PARAM_INT);
+            $stmt->execute();
+            $pedido = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if (!$pedido) {
+                throw new Exception("El pedido no existe.");
+            }
+    
+            if ($pedido['estado'] != 'pendiente') {
+                throw new Exception("Solo los pedidos pendientes pueden ser cancelados.");
+            }
+    
+            $id_usuario = $pedido['id_usuario']; // Obtener el usuario que hizo el pedido
+    
+            // Cambiar estado a "cancelado"
+            $stmtUpdate = $pdo->prepare("UPDATE pedidos SET estado = 'cancelado' WHERE id_pedido = :id_pedido");
+            $stmtUpdate->bindParam(':id_pedido', $id_pedido, PDO::PARAM_INT);
+            $stmtUpdate->execute();
+    
+            // Obtener los productos del pedido
+            $stmtDetalles = $pdo->prepare("SELECT id_producto, cantidad FROM detalle_pedido WHERE id_pedido = :id_pedido");
+            $stmtDetalles->bindParam(':id_pedido', $id_pedido, PDO::PARAM_INT);
+            $stmtDetalles->execute();
+            $detalles = $stmtDetalles->fetchAll(PDO::FETCH_ASSOC);
+    
+            foreach ($detalles as $detalle) {
+                $id_producto = $detalle['id_producto'];
+                $cantidad = $detalle['cantidad'];
+    
+                // Reponer stock
+                $stmtStock = $pdo->prepare("UPDATE productos SET stock = stock + :cantidad WHERE id_producto = :id_producto");
+                $stmtStock->execute([
+                    ':cantidad' => $cantidad,
+                    ':id_producto' => $id_producto
+                ]);
+    
+                // Registrar movimiento de inventario (entrada)
+                $stmtMovimiento = $pdo->prepare("INSERT INTO movimientos_inventario (id_producto, id_usuario, tipo_movimiento, cantidad, descripcion)
+                                                 VALUES (:id_producto, :id_usuario, 'entrada', :cantidad, 'Cancelación de pedido')");
+                $stmtMovimiento->execute([
+                    ':id_producto' => $id_producto,
+                    ':id_usuario' => $id_usuario, // Asegurar que se inserte el usuario correcto
+                    ':cantidad' => $cantidad
+                ]);
+            }
+    
+            $pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            return ['error' => $e->getMessage()];
+        }
+    }
+    
+    public static function obtenerUsuariosConPedidos() {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT DISTINCT u.id_usuario, u.nombre 
+                               FROM pedidos p 
+                               INNER JOIN usuarios u ON p.id_usuario = u.id_usuario");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    
+
 }
 ?>
