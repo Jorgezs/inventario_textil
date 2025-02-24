@@ -18,21 +18,21 @@ $productos = Producto::getAll(); // Obtener todos los productos
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario</title>
-    <link rel="stylesheet" href="../public/styles.css">
-    <script src="../public/script.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Panel de Usuario</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="#"><i class="fas fa-user"></i> Panel de Usuario</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="../controllers/authController.php?logout=true" class="btn btn-danger">Cerrar sesión</a>
+                        <a href="../controllers/authController.php?logout=true" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
                     </li>
                 </ul>
             </div>
@@ -40,14 +40,8 @@ $productos = Producto::getAll(); // Obtener todos los productos
     </nav>
 
     <div class="container mt-4">
-        <h1 class="text-center">Bienvenido, <?= $_SESSION['user_name'] ?></h1>
-
-        <div class="mb-2 text-end">
-            <button onclick="window.location.href='../views/productos.php';" class="btn btn-primary mb-2">Ver Productos</button>
-        </div>
-
-        <!-- Mostrar productos -->
-        <table class="table table-striped table-bordered">
+        <h1 class="text-center">Bienvenido, <?= $_SESSION['user_name'] ?> <i class="fas fa-smile"></i></h1>
+        <table class="table table-hover table-bordered mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
@@ -55,6 +49,7 @@ $productos = Producto::getAll(); // Obtener todos los productos
                     <th>Descripción</th>
                     <th>Precio</th>
                     <th>Stock</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,6 +60,9 @@ $productos = Producto::getAll(); // Obtener todos los productos
                         <td><?= $producto['descripcion'] ?></td>
                         <td><?= $producto['precio'] ?></td>
                         <td><?= $producto['stock'] ?></td>
+                        <td>
+                            <a href="../views/view_producto.php?id=<?= $producto['id_producto'] ?>" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

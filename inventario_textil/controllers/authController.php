@@ -9,6 +9,7 @@ if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
 }
 
 class AuthController {
+    
     // Método para registrar un nuevo usuario (añadir)
     public function register($nombre, $email, $password, $rol) {
         global $pdo;

@@ -18,50 +18,47 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración</title>
-    <!-- Vincula Bootstrap 5 -->
-    <link rel="stylesheet" href="../public/styles.css">
-    <script src="../public/script.js"></script>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Admin Panel</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto"> <!-- Clase ms-auto para mover el botón a la derecha -->
-                <li class="nav-item">
-                    <a href="../controllers/authController.php?logout=true" class="btn btn-danger">Cerrar sesión</a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-cogs"></i> Admin Panel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="../controllers/authController.php?logout=true" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-
-<div class="container mt-4">
-    <h1 class="text-center">Bienvenido, <?= $_SESSION['user_name'] ?? 'Administrador' ?></h1> <!-- Nombre del usuario aquí -->
-
-
-        <!-- Pestañas para cambiar entre productos y usuarios -->
-        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <div class="container mt-4">
+        <h1 class="text-center">Bienvenido, <?= $_SESSION['user_name'] ?? 'Administrador' ?> <i class="fas fa-user-shield"></i></h1>
+        <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Productos</button>
+                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab">Productos <i class="fas fa-box"></i></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Usuarios</button>
+                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab">Usuarios <i class="fas fa-users"></i></button>
             </li>
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
             <!-- Productos -->
-            <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+            <div class="tab-pane fade show active" id="pills-home" role="tabpanel">
                 <div class="mb-2 text-end">
-                    <button onclick="window.location.href='../views/create_producto.php';" class="btn btn-primary mb-2">Agregar Nuevo Producto</button>
+                    <a href="../views/create_producto.php" class="btn btn-success"><i class="fas fa-plus"></i> Agregar Producto</a>
                 </div>
-                <table class="table table-striped table-bordered">
+                <table class="table table-hover table-bordered">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
@@ -81,9 +78,9 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
                                 <td><?= $producto['precio'] ?></td>
                                 <td><?= $producto['stock'] ?></td>
                                 <td>
-                                    <a href="../views/edit_producto.php?id=<?= $producto['id_producto'] ?>" class="btn btn-warning btn-sm">Editar</a> 
-                                    <a href="../controllers/productoController.php?action=delete&id_producto=<?= $producto['id_producto'] ?>" 
-                                       class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
+                                    <a href="../views/view_producto.php?id=<?= $producto['id_producto'] ?>" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                                    <a href="../views/edit_producto.php?id=<?= $producto['id_producto'] ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                    <a href="../controllers/productoController.php?action=delete&id_producto=<?= $producto['id_producto'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar producto?')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -92,11 +89,11 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
             </div>
 
             <!-- Usuarios -->
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel">
                 <div class="mb-2 text-end">
-                    <button onclick="window.location.href='../views/create_usuario.php';" class="btn btn-primary mb-2">Crear Nuevo Usuario</button>
+                    <a href="../views/create_usuario.php" class="btn btn-success"><i class="fas fa-user-plus"></i> Crear Usuario</a>
                 </div>
-                <table class="table table-striped table-bordered">
+                <table class="table table-hover table-bordered">
                     <thead class="table-dark">
                         <tr>
                             <th>ID</th>
@@ -114,9 +111,9 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
                                 <td><?= $usuario['email'] ?></td>
                                 <td><?= ucfirst($usuario['rol']) ?></td>
                                 <td>
-                                    <a href="../views/edit_usuario.php?id=<?= $usuario['id_usuario'] ?>" class="btn btn-warning btn-sm">Editar</a>
-                                    <a href="../controllers/authController.php?action=delete&id_usuario=<?= $usuario['id_usuario'] ?>" 
-                                       class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
+                                    <a href="../views/view_usuario.php?id=<?= $usuario['id_usuario'] ?>" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                                    <a href="../views/editar_usuario.php?id=<?= $usuario['id_usuario'] ?>" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                    <a href="../controllers/usuarioController.php?action=delete&id_usuario=<?= $usuario['id_usuario'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar usuario?')"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
