@@ -19,6 +19,12 @@ $productos = Producto::getAll();
 <body>
     <h1>Bienvenido, Administrador</h1>
     <a href="../controllers/authController.php?logout=true">Cerrar sesión</a>
+    <h2>Agregar Producto</h2>
+<button onclick="window.location.href='../views/create_producto.php';">Agregar Nuevo Producto</button>
+
+<h2>Administrar Usuarios</h2>
+<button onclick="window.location.href='../views/create_usuario.php';">Crear Nuevo Usuario</button>
+
 
     <h2>Productos</h2>
     <table border="1">
@@ -45,16 +51,3 @@ $productos = Producto::getAll();
         <?php endforeach; ?>
     </table>
 
-    <h2>Agregar Producto</h2>
-    <form action="../controllers/productoController.php?action=create" method="POST">
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="text" name="descripcion" placeholder="Descripción" required>
-        <input type="number" name="id_categoria" placeholder="ID Categoría" required>
-        <input type="text" name="color" placeholder="Color" required>
-        <input type="text" name="talla" placeholder="Talla" required>
-        <input type="number" name="precio" placeholder="Precio" required>
-        <input type="number" name="stock" placeholder="Stock" required>
-        <button type="submit">Agregar Producto</button>
-    </form>
-</body>
-</html>

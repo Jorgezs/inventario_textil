@@ -17,4 +17,5 @@ foreach ($productos as $producto) {
 
 // Enlace para crear un nuevo producto
 echo "<a href='../controllers/productoController.php?action=createForm'>Agregar Producto</a>";
+
 ?>
