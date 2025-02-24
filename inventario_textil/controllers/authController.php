@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once('../config/database.php');
 
-
+//jh
 class AuthController {
 
     // Método para iniciar sesión
