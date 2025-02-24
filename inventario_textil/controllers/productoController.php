@@ -50,4 +50,26 @@ if (isset($_GET['action'])) {
             break;
     }
 }
+
+if (isset($_GET['action']) && $_GET['action'] === 'fetch') {
+    $productos = Producto::getAll();
+    $data = [];
+
+    foreach ($productos as $producto) {
+        $data[] = [
+            $producto['id_producto'],
+            $producto['nombre'],
+            $producto['descripcion'],
+            $producto['precio'],
+            $producto['stock'],
+            '<a href="../views/view_producto.php?id=' . $producto['id_producto'] . '" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+             <button class="btnEditar btn btn-warning btn-sm " data-id="' . $producto['id_producto'] . '"><i class="fas fa-edit"></i></button>
+             <a href="../controllers/productoController.php?action=delete&id_producto=' . $producto['id_producto'] . '" class="btn btn-danger btn-sm" onclick="return confirm(\'¿Eliminar producto?\')"><i class="fas fa-trash"></i></a>'
+        ];
+    }
+
+    echo json_encode(["data" => $data]);
+    exit();
+}
+
 ?>
