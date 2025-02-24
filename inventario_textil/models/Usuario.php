@@ -1,31 +1,26 @@
 <?php
-class Usuario {
-    public $id_usuario;
-    public $nombre;
-    public $email;
-    public $password;
-    public $rol;
+// models/Usuario.php
 
-    public function __construct($id_usuario, $nombre, $email, $password, $rol) {
-        $this->id_usuario = $id_usuario;
-        $this->nombre = $nombre;
-        $this->email = $email;
-        $this->password = $password;
-        $this->rol = $rol;
+require_once('../config/database.php');
+
+class Usuario {
+
+    // Obtener todos los usuarios
+    public static function getAll() {
+        global $pdo;
+        $query = "SELECT * FROM usuarios";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function findByEmail($email) {
+    // Eliminar un usuario por su ID
+    public static function delete($id_usuario) {
         global $pdo;
-
-        $sql = "SELECT * FROM usuarios WHERE email = :email";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(['email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user) {
-            return new Usuario($user['id_usuario'], $user['nombre'], $user['email'], $user['password'], $user['rol']);
-        }
-
-        return null;
+        $query = "DELETE FROM usuarios WHERE id_usuario = :id_usuario";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
     }
 }
+?>

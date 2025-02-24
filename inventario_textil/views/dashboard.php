@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once('../models/Producto.php');
+require_once('../models/Usuario.php'); // Incluir el modelo de Usuario
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: login.php');
@@ -8,6 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
 }
 
 $productos = Producto::getAll();
+$usuarios = Usuario::getAll(); // Obtener todos los usuarios
 ?>
 
 <!DOCTYPE html>
@@ -63,6 +65,35 @@ $productos = Producto::getAll();
                             <a href="../views/edit_producto.php?id=<?= $producto['id_producto'] ?>" class="btn btn-warning btn-sm">Editar</a> 
                             <a href="../controllers/productoController.php?action=delete&id_producto=<?= $producto['id_producto'] ?>" 
                                class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <!-- Tabla de usuarios -->
+        <h2 class="h4 mb-3 mt-5">Lista de Usuarios</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($usuarios as $usuario): ?>
+                    <tr>
+                        <td><?= $usuario['id_usuario'] ?></td>
+                        <td><?= $usuario['nombre'] ?></td>
+                        <td><?= $usuario['email'] ?></td>
+                        <td><?= ucfirst($usuario['rol']) ?></td>
+                        <td>
+                            <a href="../views/edit_usuario.php?id=<?= $usuario['id_usuario'] ?>" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="../controllers/authController.php?action=delete&id_usuario=<?= $usuario['id_usuario'] ?>" 
+                               class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este usuario?')">Eliminar</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
