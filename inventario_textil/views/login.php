@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <form method="POST" action="login.php">
-        <h2>Iniciar sesión</h2>
+        <h2>Iniciar sesión xdd</h2>
         <div>
             <label for="email">Correo electrónico:</label>
             <input type="email" name="email" id="email" required>
