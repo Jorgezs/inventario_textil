@@ -70,12 +70,15 @@ class AuthController {
                 $_SESSION['user_id'] = $user['id_usuario'];
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_role'] = $user['rol'];
+                $_SESSION['user_name'] = $user['nombre'];  // Añadir el nombre a la sesión
+
+                
 
                 if ($user['rol'] == 'admin') {
                     header('Location: ../views/dashboard.php');
                     exit();
                 } else {
-                    header('Location: ../views/productos.php');
+                    header('Location: ../views/usuario.php');
                     exit();
                 }
             } else {
