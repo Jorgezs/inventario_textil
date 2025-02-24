@@ -1,7 +1,8 @@
 <?php
 session_start();
 require_once('../models/Producto.php');
-require_once('../models/Usuario.php'); // Incluir el modelo de Usuario
+require_once('../models/Usuario.php');
+require_once('../models/Pedido.php'); // Incluir modelo de pedidos
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: login.php');
@@ -9,7 +10,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
 }
 
 $productos = Producto::getAll();
-$usuarios = Usuario::getAll(); // Obtener todos los usuarios
+$usuarios = Usuario::getAll();
+$pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
 ?>
 
 <!DOCTYPE html>
@@ -28,12 +30,10 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
 </head>
 
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="fas fa-cogs"></i> Admin Panel</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -50,20 +50,25 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
     <div class="container mt-4">
         <h1 class="text-center">Bienvenido, <?= $_SESSION['user_name'] ?? 'Administrador' ?> <i
                 class="fas fa-user-shield"></i></h1>
-        <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home"
-                    type="button" role="tab">Productos <i class="fas fa-box"></i></button>
+
+        <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab">
+            <li class="nav-item">
+                <button class="nav-link active" id="pills-productos-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-productos">Productos <i class="fas fa-box"></i></button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile"
-                    type="button" role="tab">Usuarios <i class="fas fa-users"></i></button>
+            <li class="nav-item">
+                <button class="nav-link" id="pills-usuarios-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-usuarios">Usuarios <i class="fas fa-users"></i></button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="pills-pedidos-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-pedidos">Pedidos <i class="fas fa-shopping-cart"></i></button>
             </li>
         </ul>
 
-        <div class="tab-content" id="pills-tabContent">
+        <div class="tab-content">
             <!-- Productos -->
-            <div class="tab-pane fade show active" id="pills-home" role="tabpanel">
+            <div class="tab-pane fade show active" id="pills-productos">
                 <div class="mb-2 text-end">
                     <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal"
                         data-bs-target="#modalAgregar">
@@ -88,7 +93,7 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
             </div>
 
             <!-- Usuarios -->
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel">
+            <div class="tab-pane fade" id="pills-usuarios">
                 <div class="mb-2 text-end">
                     <a href="../views/create_usuario.php" class="btn btn-success"><i class="fas fa-user-plus"></i> Crear
                         Usuario</a>
@@ -118,6 +123,37 @@ $usuarios = Usuario::getAll(); // Obtener todos los usuarios
                                     <a href="../controllers/usuarioController.php?action=delete&id_usuario=<?= $usuario['id_usuario'] ?>"
                                         class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar usuario?')"><i
                                             class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pedidos -->
+            <div class="tab-pane fade" id="pills-pedidos">
+                <table class="table table-hover table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Usuario</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($pedidos as $pedido): ?>
+                            <tr>
+                                <td><?= $pedido['id_pedido'] ?></td>
+                                <td><?= $pedido['nombre_usuario'] ?></td>
+                                <td><?= $pedido['fecha_pedido'] ?></td>
+                                <td><?= ucfirst($pedido['estado']) ?></td>
+                                <td>
+                                    <a href="../views/view_pedidos.php?id=<?= $pedido['id_pedido'] ?>"
+                                        class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
+                                    <a href="../controllers/pedidoController.php?action=actualizar_estado&id_pedido=<?= $pedido['id_pedido'] ?>"
+                                        class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Estado</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

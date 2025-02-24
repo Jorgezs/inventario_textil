@@ -1,21 +1,22 @@
 <?php
-require_once('../config/database.php');
-require_once('../models/Pedido.php');
-require_once('../models/DetallePedido.php');
+require_once '../models/Pedido.php';
+session_start();
 
-class PedidoController {
-
-    public function crearPedido($id_usuario) {
-        global $pdo;
-
-        // Crear el pedido
-        $query = 'INSERT INTO pedidos (id_usuario, fecha_pedido, estado) VALUES (:id_usuario, NOW(), "pendiente")';
-        $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $pdo->lastInsertId(); // Devolver el ID del pedido creado
-    }
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../views/login.php');
+    exit();
 }
 
-$pedidoController = new PedidoController();
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['productos'])) {
+    $id_usuario = $_SESSION['user_id'];
+    $productos = json_decode($_POST['productos'], true);
+
+    $resultado = Pedido::crearPedido($id_usuario, $productos);
+
+    if (isset($resultado['error'])) {
+        echo json_encode(['error' => $resultado['error']]);
+    } else {
+        echo json_encode(['success' => 'Pedido realizado con éxito', 'id_pedido' => $resultado]);
+    }
+}
+?>
