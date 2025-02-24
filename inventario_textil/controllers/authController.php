@@ -1,6 +1,10 @@
 <?php
-// Incluir el archivo de configuración de la base de datos
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once('../config/database.php');
+
 
 class AuthController {
 
@@ -72,9 +76,11 @@ class AuthController {
 
     // Método para cerrar sesión
     public function logout() {
-        // Eliminar las variables de sesión
-        session_unset();
-        session_destroy();
+        session_start(); // Inicia la sesión en caso de que no esté iniciada
+        session_unset(); // Elimina todas las variables de sesión
+        session_destroy(); // Destruye la sesión
+    
+        // Redirigir al usuario a la página de inicio de sesión
         header('Location: ../views/login.php');
         exit();
     }
