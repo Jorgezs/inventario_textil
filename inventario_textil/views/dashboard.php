@@ -292,19 +292,18 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
             // Cargar datos en el modal de edición
             $(document).on("click", ".btnEditar", function () {
                 let id_producto = $(this).data("id");
-                let nombre = $(this).data("nombre");
 
-                console.log("Se hizo clic en editar, ID:", id_producto, nombre);
+                console.log("Se hizo clic en editar, ID:", id_producto);
 
                 $.ajax({
                     url: "../controllers/productoController.php",
                     type: "GET",
                     data: {
-                        action: "get", id_producto: id_producto,
-                        nombre: nombre
+                        action: "get", id_producto: id_producto
                     },
                     dataType: "json",
                     success: function (data) {
+                        console.log(data);
                         $("#id_producto").val(data.id_producto);
                         $("#edit_nombre").val(data.nombre);
                         $("#edit_descripcion").val(data.descripcion);

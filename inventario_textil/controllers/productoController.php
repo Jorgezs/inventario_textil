@@ -63,7 +63,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'fetch') {
             $producto['precio'],
             $producto['stock'],
             '<a href="../views/view_producto.php?id=' . $producto['id_producto'] . '" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-             <button class="btnEditar btn btn-warning btn-sm " data-id="' . $producto['id_producto'] . '"><i class="fas fa-edit"></i></button>
+             <a href="../views/edit_producto.php?id=' . $producto['id_producto'] . '" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
              <a href="../controllers/productoController.php?action=delete&id_producto=' . $producto['id_producto'] . '" class="btn btn-danger btn-sm" onclick="return confirm(\'¿Eliminar producto?\')"><i class="fas fa-trash"></i></a>'
         ];
     }
