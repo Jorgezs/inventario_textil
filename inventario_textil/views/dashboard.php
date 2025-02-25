@@ -3,6 +3,8 @@ session_start();
 require_once('../models/Producto.php');
 require_once('../models/Usuario.php');
 require_once('../models/Pedido.php'); // Incluir modelo de pedidos
+require_once('../models/Movimiento.php');
+
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: login.php');
@@ -12,6 +14,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
 $productos = Producto::getAll();
 $usuarios = Usuario::getAll();
 $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
+$movimientos = Movimiento::obtenerMovimientos();
+
 ?>
 
 <!DOCTYPE html>
@@ -26,10 +30,12 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-
 </head>
 
 <body>
+
+
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="fas fa-cogs"></i> Admin Panel</a>
@@ -64,9 +70,46 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                 <button class="nav-link" id="pills-pedidos-tab" data-bs-toggle="pill"
                     data-bs-target="#pills-pedidos">Pedidos <i class="fas fa-shopping-cart"></i></button>
             </li>
+            <!-- Pestaña de Movimientos -->
+            <li class="nav-item">
+                <button class="nav-link" id="pills-movimientos-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-movimientos">Movimientos <i class="fas fa-exchange-alt"></i></button>
+            </li>
         </ul>
 
         <div class="tab-content">
+
+            <!-- Contenido de Movimientos -->
+            <div class="tab-pane fade" id="pills-movimientos">
+                <h3>Movimientos de Inventario</h3>
+                <table class="table table-hover table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Movimiento</th>
+                            <th>Producto</th>
+                            <th>Usuario</th>
+                            <th>Tipo</th>
+                            <th>Cantidad</th>
+                            <th>Fecha</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($movimientos as $movimiento): ?>
+                            <tr>
+                                <td><?= $movimiento['id_movimiento'] ?></td>
+                                <td><?= $movimiento['producto'] ?></td>
+                                <td><?= $movimiento['usuario'] ?></td>
+                                <td><?= ucfirst($movimiento['tipo_movimiento']) ?></td>
+                                <td><?= $movimiento['cantidad'] ?></td>
+                                <td><?= $movimiento['fecha_movimiento'] ?></td>
+                                <td><?= $movimiento['descripcion'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
             <!-- Productos -->
             <div class="tab-pane fade show active" id="pills-productos">
                 <div class="mb-2 text-end">
@@ -74,7 +117,6 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                         data-bs-target="#modalAgregar">
                         <i class="fas fa-plus"></i> Agregar Producto
                     </button>
-
                 </div>
                 <table id="productosTable" class="table table-hover table-bordered">
                     <thead class="table-dark">
@@ -89,7 +131,6 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                     </thead>
                     <tbody></tbody>
                 </table>
-
             </div>
 
             <!-- Usuarios -->
@@ -135,34 +176,32 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                 <table class="table table-hover table-bordered">
                     <thead class="table-dark">
                         <tr>
-                            <th>ID Pedido</th>
-                            <th>Usuario</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
+                            <th>ID Usuario</th>
+                            <th>Nombre</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($pedidos as $pedido): ?>
+                        <?php foreach ($usuarios as $usuario): ?>
                             <tr>
-                                <td><?= $pedido['id_pedido'] ?></td>
-                                <td><?= $pedido['nombre_usuario'] ?></td>
-                                <td><?= $pedido['fecha_pedido'] ?></td>
-                                <td><?= ucfirst($pedido['estado']) ?></td>
+                                <td><?= $usuario['id_usuario'] ?></td>
+                                <td><?= $usuario['nombre'] ?></td>
                                 <td>
-                                    <a href="../views/view_pedidos.php?id=<?= $pedido['id_pedido'] ?>"
-                                        class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
-                                    <a href="../controllers/pedidoController.php?action=actualizar_estado&id_pedido=<?= $pedido['id_pedido'] ?>"
-                                        class="btn btn-warning btn-sm"><i class="fas fa-edit"></i> Estado</a>
+                                    <a href="../views/pedidos_admin.php?id_usuario=<?= $usuario['id_usuario'] ?>"
+                                        class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> Ver Pedidos
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+
         </div>
     </div>
-    <!-- modales  -->
+
+    <!-- Modal de agregar producto -->
     <div class="modal fade" id="modalAgregar" tabindex="-1" aria-labelledby="modalAgregarLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -172,95 +211,12 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                 </div>
                 <div class="modal-body">
                     <form id="formAgregar">
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="descripcion" class="form-label">Descripción</label>
-                            <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_categoria" class="form-label">Categoría</label>
-                            <input type="number" class="form-control" id="id_categoria" name="id_categoria" required>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="color" class="form-label">Color</label>
-                                <input type="text" class="form-control" id="color" name="color" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="talla" class="form-label">Talla</label>
-                                <input type="text" class="form-control" id="talla" name="talla" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="precio" class="form-label">Precio (€)</label>
-                                <input type="number" class="form-control" id="precio" name="precio" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="stock" class="form-label">Stock</label>
-                                <input type="number" class="form-control" id="stock" name="stock" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar Producto</button>
+                        <!-- Formulario de producto -->
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditarLabel"><i class="fas fa-edit"></i> Editar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formEditar">
-                        <input type="hidden" id="id_producto" name="id_producto">
-                        <div class="mb-3">
-                            <label for="edit_nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_descripcion" class="form-label">Descripción</label>
-                            <textarea class="form-control" id="edit_descripcion" name="descripcion" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_id_categoria" class="form-label">Categoría</label>
-                            <input type="number" class="form-control" id="edit_id_categoria" name="id_categoria"
-                                required>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_color" class="form-label">Color</label>
-                                <input type="text" class="form-control" id="edit_color" name="color" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_talla" class="form-label">Talla</label>
-                                <input type="text" class="form-control" id="edit_talla" name="talla" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_precio" class="form-label">Precio (€)</label>
-                                <input type="number" class="form-control" id="edit_precio" name="precio" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_stock" class="form-label">Stock</label>
-                                <input type="number" class="form-control" id="edit_stock" name="stock" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- jQuery y DataTables -->
@@ -270,7 +226,6 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-
         $(document).ready(function () {
             $('#productosTable').DataTable({
                 "ajax": {
@@ -289,12 +244,10 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                     "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
                 }
             });
+
             // Cargar datos en el modal de edición
             $(document).on("click", ".btnEditar", function () {
                 let id_producto = $(this).data("id");
-
-                console.log("Se hizo clic en editar, ID:", id_producto);
-
                 $.ajax({
                     url: "../controllers/productoController.php",
                     type: "GET",
@@ -303,7 +256,7 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                     },
                     dataType: "json",
                     success: function (data) {
-                        console.log(data);
+                        // Rellenar el formulario con los datos del producto
                         $("#id_producto").val(data.id_producto);
                         $("#edit_nombre").val(data.nombre);
                         $("#edit_descripcion").val(data.descripcion);
@@ -313,7 +266,8 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                         $("#edit_precio").val(data.precio);
                         $("#edit_stock").val(data.stock);
 
-                        $("#modalEditar").modal("show"); // Asegúrate de que este código se ejecuta
+                        // Mostrar el modal de edición
+                        $("#modalEditar").modal("show");
                     },
                     error: function () {
                         Swal.fire({
@@ -325,7 +279,6 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                 });
             });
 
-
             // Guardar cambios en edición
             $("#formEditar").submit(function (e) {
                 e.preventDefault();
@@ -336,6 +289,13 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                     success: function () {
                         $("#modalEditar").modal("hide");
                         $("#productosTable").DataTable().ajax.reload();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo actualizar el producto.',
+                        });
                     }
                 });
             });
@@ -343,7 +303,6 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
             // Agregar producto con AJAX
             $("#formAgregar").submit(function (e) {
                 e.preventDefault();
-
                 $.ajax({
                     url: "../controllers/productoController.php?action=create",
                     type: "POST",
@@ -351,18 +310,15 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                     success: function () {
                         $("#modalAgregar").modal("hide");
                         $("#productosTable").DataTable().ajax.reload();
-
-                        // SweetAlert de éxito
                         Swal.fire({
                             icon: 'success',
                             title: '¡Producto agregado!',
                             text: 'El producto se ha agregado correctamente.',
                             showConfirmButton: false,
-                            timer: 2000 // Cierra la alerta en 2 segundos
+                            timer: 2000
                         });
                     },
                     error: function () {
-                        // SweetAlert de error
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -373,8 +329,25 @@ $pedidos = Pedido::obtenerTodosLosPedidos(); // Obtener todos los pedidos
                 });
             });
 
+            // Eliminar producto con AJAX
+            $(document).on("click", ".btnEliminar", function () {
+                let id_producto = $(this).data("id");
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esto!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "../controllers/productoController.php?action=delete&id_producto=" + id_producto;
+                    }
+                });
+            });
         });
-    </script>
+
+        S    </script>
 </body>
 
 </html>

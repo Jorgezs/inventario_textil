@@ -1,17 +1,16 @@
 <?php
 session_start();
 require_once('../models/Pedido.php');
-require_once('../models/Producto.php');
 
-// Verificar si el usuario está autenticado
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'usuario') {
+// Verificar si el usuario es administrador
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: login.php');
     exit();
 }
 
 // Verificar si se ha pasado el ID del pedido
 if (!isset($_GET['id'])) {
-    header('Location: usuario.php');
+    header('Location: dashboard.php');
     exit();
 }
 
@@ -19,9 +18,9 @@ if (!isset($_GET['id'])) {
 $id_pedido = $_GET['id'];
 $pedido = Pedido::obtenerPorId($id_pedido);
 
-// Verificar si el pedido pertenece al usuario
-if ($pedido['id_usuario'] != $_SESSION['user_id']) {
-    header('Location: usuario.php');
+// Verificar si el pedido existe
+if (!$pedido) {
+    header('Location: dashboard.php');
     exit();
 }
 
@@ -37,6 +36,7 @@ $productos_pedido = Pedido::obtenerProductosPorPedido($id_pedido);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles del Pedido</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-black">
@@ -48,7 +48,7 @@ $productos_pedido = Pedido::obtenerProductosPorPedido($id_pedido);
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="usuario.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver al Panel</a>
+                        <a href="dashboard.php?id_usuario=<?= $pedido['id_usuario'] ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
                     </li>
                     <li class="nav-item">
                         <a href="../controllers/authController.php?logout=true" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
@@ -62,6 +62,7 @@ $productos_pedido = Pedido::obtenerProductosPorPedido($id_pedido);
         <h1 class="text-center">Detalles del Pedido #<?= $pedido['id_pedido'] ?></h1>
         <p><strong>Fecha:</strong> <?= $pedido['fecha_pedido'] ?></p>
         <p><strong>Estado:</strong> <?= ucfirst($pedido['estado']) ?></p>
+        <p><strong>Usuario:</strong> <?= $pedido['id_usuario'] ?></p>
 
         <h3>Productos en este Pedido</h3>
         <table class="table table-bordered">
@@ -91,7 +92,46 @@ $productos_pedido = Pedido::obtenerProductosPorPedido($id_pedido);
         </table>
 
         <h4>Total del Pedido: <?= number_format($total_pedido, 2) ?> €</h4>
+
+        <button class="btn btn-warning" onclick="cambiarEstado(<?= $pedido['id_pedido'] ?>)">
+            <i class="fas fa-edit"></i> Cambiar Estado
+        </button>
     </div>
+
+    <script>
+        function cambiarEstado(idPedido) {
+            Swal.fire({
+                title: 'Cambiar Estado',
+                input: 'select',
+                inputOptions: {
+    pendiente: 'Pendiente',
+    procesando: 'Procesando',  // Cambié 'en_proceso' por 'procesando'
+    enviado: 'Enviado',
+    entregado: 'Entregado',
+    cancelado: 'Cancelado'
+},
+                inputPlaceholder: 'Selecciona un estado',
+                showCancelButton: true,
+                confirmButtonText: 'Actualizar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let nuevoEstado = result.value;
+                    fetch('../controllers/pedidoController.php?action=actualizar_estado', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `id_pedido=${idPedido}&estado=${nuevoEstado}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.fire('Actualizado', data.success || data.error, 'success')
+                            .then(() => location.reload());
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
