@@ -192,7 +192,76 @@ class Pedido {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
+    public static function actualizarEstadoPedido($id_pedido, $nuevo_estado) {
+        global $pdo;
+        try {
+            // Verifica el valor de nuevo_estado
+            error_log("Nuevo estado: " . $nuevo_estado); // O usa var_dump($nuevo_estado); en lugar de error_log()
+    
+            $stmt = $pdo->prepare("UPDATE pedidos SET estado = :estado WHERE id_pedido = :id_pedido");
+            $stmt->bindParam(':estado', $nuevo_estado, PDO::PARAM_STR);
+            $stmt->bindParam(':id_pedido', $id_pedido, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return ['success' => "El estado del pedido ha sido actualizado a '$nuevo_estado'"];
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+    public static function eliminarDetallesPorPedido($id_pedido) {
+        global $pdo;
+        try {
+            $stmt = $pdo->prepare("DELETE FROM detalle_pedido WHERE id_pedido = :id_pedido");
+            $stmt->bindParam(':id_pedido', $id_pedido, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return ['success' => 'Detalles eliminados correctamente'];
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+    
+    public static function eliminarPedido($id_pedido) {
+        global $pdo;
+        try {
+            $stmt = $pdo->prepare("DELETE FROM pedidos WHERE id_pedido = :id_pedido");
+            $stmt->bindParam(':id_pedido', $id_pedido, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return ['success' => 'Pedido eliminado correctamente'];
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
     
 
+    public static function eliminarDetallesDePedidosCancelados($id_usuario) {
+        global $pdo;
+        try {
+            // Eliminar los detalles de los pedidos cancelados
+            $stmt = $pdo->prepare("DELETE FROM detalle_pedido WHERE id_pedido IN (SELECT id_pedido FROM pedidos WHERE estado = 'cancelado' AND id_usuario = :id_usuario)");
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+    
+            return ['success' => 'Detalles de pedidos cancelados eliminados correctamente'];
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+    public static function eliminarPedidosCancelados($id_usuario) {
+        global $pdo;
+        try {
+            // Eliminar los pedidos cancelados
+            $stmt = $pdo->prepare("DELETE FROM pedidos WHERE estado = 'cancelado' AND id_usuario = :id_usuario");
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->execute();
+    
+            return ['success' => 'Pedidos cancelados eliminados correctamente'];
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+        
+    
 }
 ?>

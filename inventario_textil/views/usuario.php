@@ -186,38 +186,41 @@ if (isset($_POST['finalize_order'])) {
                     </div>
                 </div>
             </div>
-
-            <!-- Mis Pedidos -->
-            <div class="tab-pane fade" id="pills-pedidos">
-                <h2 class="text-center">Mis Pedidos</h2>
-                <table class="table table-hover table-bordered mt-3">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID Pedido</th>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($pedidos as $pedido): ?>
-                            <tr>
-                                <td><?= $pedido['id_pedido'] ?></td>
-                                <td><?= $pedido['fecha_pedido'] ?></td>
-                                <td><?= ucfirst($pedido['estado']) ?></td>
-                                <td>
-                                    <a href="../views/view_pedidos.php?id=<?= $pedido['id_pedido'] ?>" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver Detalles</a>
-                                    <?php if ($pedido['estado'] === 'pendiente'): ?>
-        <a href="../controllers/pedidoController.php?action=cancelar&id_pedido=<?= $pedido['id_pedido'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas cancelar este pedido?')"><i class="fas fa-times"></i> Cancelar</a>
-    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<!-- Mis Pedidos -->
+<div class="tab-pane fade" id="pills-pedidos">
+    <h2 class="text-center">Mis Pedidos</h2>
+    
+    <!-- Botón para eliminar todos los pedidos cancelados -->
+    <a href="../controllers/pedidoController.php?action=eliminar_cancelados" class="btn btn-danger mb-3" onclick="return confirm('¿Estás seguro de que deseas eliminar todos los pedidos cancelados?')">
+        Eliminar Todos los Cancelados
+    </a>
+    
+    <table class="table table-hover table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID Pedido</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($pedidos as $pedido): ?>
+                <tr>
+                    <td><?= $pedido['id_pedido'] ?></td>
+                    <td><?= $pedido['fecha_pedido'] ?></td>
+                    <td><?= ucfirst($pedido['estado']) ?></td>
+                    <td>
+                        <a href="../views/view_pedidos.php?id=<?= $pedido['id_pedido'] ?>" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver Detalles</a>
+                        <?php if ($pedido['estado'] === 'pendiente'): ?>
+                            <a href="../controllers/pedidoController.php?action=cancelar&id_pedido=<?= $pedido['id_pedido'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas cancelar este pedido?')"><i class="fas fa-times"></i> Cancelar</a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
     <!-- Card flotante del carrito -->
     <div id="cart-card" class="floating-card">

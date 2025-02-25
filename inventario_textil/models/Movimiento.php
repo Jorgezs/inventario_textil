@@ -2,6 +2,25 @@
 require_once('../config/database.php');
 
 class Movimiento {
+    // Función para obtener los movimientos de inventario
+    public static function obtenerMovimientos() {
+        global $pdo;
+
+        $query = "
+            SELECT m.id_movimiento, p.nombre AS producto, u.nombre AS usuario, m.tipo_movimiento, m.cantidad, m.fecha_movimiento, m.descripcion
+            FROM movimientos_inventario m
+            JOIN productos p ON m.id_producto = p.id_producto
+            JOIN usuarios u ON m.id_usuario = u.id_usuario
+            ORDER BY m.fecha_movimiento DESC
+        ";
+
+        $stmt = $pdo->prepare($query);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Función para registrar un movimiento (ya la tienes)
     public static function registrarMovimiento($id_producto, $id_usuario, $tipo_movimiento, $cantidad, $descripcion) {
         global $pdo;
 
@@ -15,4 +34,5 @@ class Movimiento {
         $stmt->execute();
     }
 }
+
 ?>
