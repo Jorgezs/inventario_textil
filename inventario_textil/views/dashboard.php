@@ -37,46 +37,50 @@ $movimientos = Movimiento::obtenerMovimientos();
 
 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#"><i class="fas fa-cogs"></i> Admin Panel</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a href="../controllers/authController.php?logout=true" class="btn btn-danger"><i
-                            class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-cogs"></i> Admin Panel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="../controllers/authController.php?logout=true" class="btn btn-danger"><i
+                                class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container mt-4">
-    <h1 class="text-center">Bienvenido, <?= $_SESSION['user_name'] ?? 'Administrador' ?> <i
-            class="fas fa-user-shield"></i></h1>
+    <div class="container mt-4">
+        <h1 class="text-center">Bienvenido, <?= $_SESSION['user_name'] ?? 'Administrador' ?> <i
+                class="fas fa-user-shield"></i></h1>
 
-    <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab">
-        <li class="nav-item">
-            <button class="nav-link active" id="pills-productos-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-productos">Productos <i class="fas fa-box"></i></button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" id="pills-usuarios-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-usuarios">Usuarios <i class="fas fa-users"></i></button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" id="pills-pedidos-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-pedidos">Pedidos <i class="fas fa-shopping-cart"></i></button>
-        </li>
-        <!-- Pestaña de Movimientos -->
-        <li class="nav-item">
-            <button class="nav-link" id="pills-movimientos-tab" data-bs-toggle="pill"
-                data-bs-target="#pills-movimientos">Movimientos <i class="fas fa-exchange-alt"></i></button>
-        </li>
-    </ul>
+        <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab">
+            <li class="nav-item">
+                <button class="nav-link active" id="pills-productos-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-productos">Productos <i class="fas fa-box"></i></button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="pills-usuarios-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-usuarios">Usuarios <i class="fas fa-users"></i></button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="pills-pedidos-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-pedidos">Pedidos <i class="fas fa-shopping-cart"></i></button>
+            </li>
+            <!-- Pestaña de Movimientos -->
+            <li class="nav-item">
+                <button class="nav-link" id="pills-movimientos-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-movimientos">Movimientos <i class="fas fa-exchange-alt"></i></button>
+            </li>
+        </ul>
+
+    
+
+          
     <div class="tab-content">
     <!-- Cargar los contenidos dinámicamente según la pestaña seleccionada -->
     <div class="tab-pane fade" id="pills-usuarios">
