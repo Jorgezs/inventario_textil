@@ -1,7 +1,7 @@
 <?php
 // models/Usuario.php
 
-require_once('../config/database.php');
+require_once __DIR__ . '/../config/database.php';
 
 class Usuario {
 
@@ -72,6 +72,16 @@ public static function update($id_usuario, $nombre, $email, $password, $rol) {
         return true; // Usuario actualizado correctamente
     }
     return false; // Error al actualizar el usuario
+}
+
+public static function delete($id_usuario) {
+    global $pdo;
+    
+    $query = "DELETE FROM usuarios WHERE id_usuario = :id_usuario";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+    
+    return $stmt->execute(); // Retorna true si se ejecuta correctamente
 }
 
 

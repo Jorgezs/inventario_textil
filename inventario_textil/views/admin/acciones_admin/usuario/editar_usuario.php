@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('../models/Usuario.php');
+require_once '../../../../models/Usuario.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: ../views/login.php');
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = Usuario::update($id_usuario, $nombre, $email, $password, $rol);
 
     if ($result) {
-        header('Location: ../views/dashboard.php'); // Redirigir después de la actualización
+        header('Location: ../../../../views/dashboard.php'); // Redirigir después de la actualización
         exit();
     } else {
         echo "Error al actualizar el usuario.";

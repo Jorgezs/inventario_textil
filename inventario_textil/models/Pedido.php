@@ -1,5 +1,5 @@
 <?php
-require_once '../config/database.php';
+require_once __DIR__ . '/../config/database.php';
 
 class Pedido {
     public static function crearPedido($id_usuario, $productos) {

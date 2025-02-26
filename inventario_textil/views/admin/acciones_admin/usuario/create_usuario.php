@@ -22,7 +22,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
         <h1 class="text-center mb-4"><i class="fas fa-user-plus"></i> Crear Nuevo Usuario</h1>
         
         <div class="card shadow-lg p-4">
-            <form action="../controllers/authController.php" method="POST">
+            <form action="../../../../controllers/authController.php" method="POST">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre del Usuario</label>
                     <div class="input-group">
@@ -60,7 +60,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary" name="action" value="register"><i class="fas fa-save"></i> Crear Usuario</button>
-                    <a href="dashboard.php" class="btn btn-secondary ms-2"><i class="fas fa-arrow-left"></i> Volver al Panel</a>
+                    <a href="../../../../views/dashboard.php" class="btn btn-secondary ms-2"><i class="fas fa-arrow-left"></i> Volver al Panel</a>
                 </div>
             </form>
         </div>

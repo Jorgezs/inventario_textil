@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../models/Pedido.php';
+require_once '../../../../models/Pedido.php';
 
 // Verificar si el usuario es administrador
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
@@ -37,10 +37,10 @@ $pedidos = Pedido::obtenerPedidosPorUsuario($id_usuario);
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a href="dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver al Panel</a>
+                        <a href="../../../../views/dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver al Panel</a>
                     </li>
                     <li class="nav-item">
-                        <a href="../controllers/authController.php?logout=true" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+                        <a href="../../../../controllers/authController.php?logout=true" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
                     </li>
                 </ul>
             </div>
@@ -99,7 +99,7 @@ $pedidos = Pedido::obtenerPedidosPorUsuario($id_usuario);
             }).then((result) => {
                 if (result.isConfirmed) {
                     let nuevoEstado = result.value;
-                    fetch('../controllers/pedidoController.php?action=actualizar_estado', {
+                    fetch('../../../../controllers/pedidoController.php?action=actualizar_estado', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: `id_pedido=${idPedido}&estado=${nuevoEstado}`
