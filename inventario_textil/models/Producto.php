@@ -64,5 +64,27 @@ class Producto {
         $stmt->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
         $stmt->execute();
     }
+
+
+    public static function actualizarStock($id_producto, $tipo_movimiento, $cantidad) {
+        global $pdo;
+    
+        // Si el tipo de movimiento es "entrada", se suma el stock
+        if ($tipo_movimiento == 'entrada') {
+            $query = "UPDATE productos SET stock = stock + :cantidad WHERE id_producto = :id_producto";
+        } 
+        // Si el tipo de movimiento es "salida", se resta el stock
+        elseif ($tipo_movimiento == 'salida') {
+            $query = "UPDATE productos SET stock = stock - :cantidad WHERE id_producto = :id_producto";
+        }
+    
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(':cantidad', $cantidad, PDO::PARAM_INT);
+        $stmt->bindParam(':id_producto', $id_producto, PDO::PARAM_INT);
+    
+        return $stmt->execute(); // Retorna true si se ejecuta correctamente
+    }
+    
+    
 }
 ?>

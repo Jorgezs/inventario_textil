@@ -5,6 +5,8 @@ $movimientos = Movimiento::obtenerMovimientos();
 
         <!-- Contenido de Movimientos -->
         <div class="tab-pane fade show active" id="pills-movimientos">
+        <a href="admin/acciones_admin/movimiento/registro_movimiento.php" class="btn btn-success"><i class="fas fa-user-plus"></i> Registro</a>
+
             <h3>Movimientos de Inventario</h3>
             <table class="table table-hover table-bordered">
                 <thead class="table-dark">
